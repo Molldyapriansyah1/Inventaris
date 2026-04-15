@@ -65,9 +65,12 @@ class ItemsController extends Controller
         return redirect()->route('items.index')
                          ->with('success', 'Item berhasil dihapus.');
     }
-    public function export() 
+    public function export(Request $request) 
     {
-        return Excel::download(new ItemsExport, 'items_list.xlsx');
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        return Excel::download(new ItemsExport($startDate, $endDate), 'items_list.xlsx');
     }
     public function show($id)
     {

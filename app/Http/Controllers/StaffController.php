@@ -109,9 +109,11 @@ class StaffController extends Controller
     {
         // Get role from URL (e.g., ?role=admin), default to 'staff'
         $role = $request->query('role', 'staff'); 
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
         
         $fileName = $role . '_accounts_' . now()->format('Y-m-d') . '.xlsx';
 
-        return Excel::download(new StaffExport($role), $fileName);
+        return Excel::download(new StaffExport($role, $startDate, $endDate), $fileName);
     }
 }

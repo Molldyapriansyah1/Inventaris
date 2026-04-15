@@ -32,6 +32,7 @@ class LendingStaffController extends Controller
             'item_id'      => 'required|exists:items,id',
             'total'        => 'required|integer|min:1',
             'keterangan'   => 'nullable|string',
+            'edited_by'    => 'required|string|max:255',
         ]);
 
         /** @var \App\Models\Staff $user */
@@ -57,7 +58,7 @@ class LendingStaffController extends Controller
             'keterangan'   => $request->keterangan,
             'borrowDate'   => date('Y-m-d'),
             'status'       => 'borrowed',
-            'edited_by'    => $user->name,
+            'edited_by'    => $request->edited_by,
         ]);
 
         return redirect()->route('lendings.index')
@@ -77,6 +78,7 @@ class LendingStaffController extends Controller
             'item_id'      => 'required|exists:items,id',
             'total'        => 'required|integer|min:1',
             'keterangan'   => 'nullable|string',
+            'edited_by'    => 'required|string|max:255',
         ]);
 
         /** @var \App\Models\Staff $user */
@@ -89,7 +91,7 @@ class LendingStaffController extends Controller
             'keterangan'   => $request->keterangan,
             'borrowDate'   => date('Y-m-d'),
             'status'       => $lending->status, 
-            'edited_by'    => $user->name,
+            'edited_by'    => $request->edited_by,
         ]);
 
         return redirect()->route('lendings.index')
@@ -121,8 +123,11 @@ class LendingStaffController extends Controller
         return redirect()->route('lendings.index')
                         ->with('success', 'Status berhasil diperbarui.');
     }
-    public function export() 
+    public function export(Request $request) 
     {
-        return Excel::download(new LendingExport, 'lending_report.xlsx');
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        return Excel::download(new LendingExport($startDate, $endDate), 'lending_report.xlsx');
     }
 }

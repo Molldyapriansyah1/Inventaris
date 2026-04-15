@@ -82,6 +82,19 @@
                       rows="3">{{ old('keterangan', $lending->keterangan ?? '') }}</textarea>
         </div>
 
+        {{-- Edited By --}}
+        <div class="mb-4">
+            <label style="font-size:14px; font-weight:600; color:#1a1a1a; display:block; margin-bottom:8px;">
+                Edited By
+            </label>
+            <input type="text"
+                   name="edited_by"
+                   value="{{ old('edited_by', $lending->edited_by ?? auth()->user()->name) }}"
+                   placeholder="Nama admin"
+                   style="width:100%; padding:10px 14px; font-size:14px; border:1px solid #e0e0e0; border-radius:8px; outline:none;"
+                   required>
+        </div>
+
        
 
         {{-- Actions --}}

@@ -8,10 +8,28 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class LendingExport implements FromCollection, WithHeadings, WithMapping
 {
+    protected $startDate;
+    protected $endDate;
+
+    public function __construct($startDate = null, $endDate = null)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
+
     public function collection()
     {
-        // Load with the item relationship to avoid slow queries
-        return LendingStaff::with('item')->get();
+        $query = LendingStaff::with('item');
+
+        if ($this->startDate) {
+            $query->whereDate('borrowDate', '>=', $this->startDate);
+        }
+
+        if ($this->endDate) {
+            $query->whereDate('borrowDate', '<=', $this->endDate);
+        }
+
+        return $query->latest()->get();
     }
 
     public function headings(): array

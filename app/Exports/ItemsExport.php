@@ -9,13 +9,31 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class ItemsExport implements FromCollection, WithHeadings, WithMapping
 {
+    protected $startDate;
+    protected $endDate;
+
+    public function __construct($startDate = null, $endDate = null)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
+
     /**
     * @return \Illuminate\Support\Collection
     */
     public function collection()
     {
-        // Fetch items with their category relationship
-        return Items::with('category')->get();
+        $query = Items::with('category');
+
+        if ($this->startDate) {
+            $query->whereDate('created_at', '>=', $this->startDate);
+        }
+
+        if ($this->endDate) {
+            $query->whereDate('created_at', '<=', $this->endDate);
+        }
+
+        return $query->latest()->get();
     }
 
     // Define the column headers

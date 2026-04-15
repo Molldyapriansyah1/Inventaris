@@ -9,16 +9,29 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class StaffExport implements FromCollection, WithHeadings, WithMapping
 {
     protected $role;
+    protected $startDate;
+    protected $endDate;
 
-    public function __construct($role)
+    public function __construct($role, $startDate = null, $endDate = null)
     {
         $this->role = $role;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
     }
 
     public function collection()
     {
-        // Filter by the 'role' enum column in your staff table
-        return Staff::where('role', $this->role)->get();
+        $query = Staff::where('role', $this->role);
+
+        if ($this->startDate) {
+            $query->whereDate('created_at', '>=', $this->startDate);
+        }
+
+        if ($this->endDate) {
+            $query->whereDate('created_at', '<=', $this->endDate);
+        }
+
+        return $query->latest()->get();
     }
 
     public function headings(): array
